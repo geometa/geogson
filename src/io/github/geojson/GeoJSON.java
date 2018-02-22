@@ -2,7 +2,7 @@ package io.github.geojson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import java.io.Reader;
 import java.lang.reflect.Type;
 
