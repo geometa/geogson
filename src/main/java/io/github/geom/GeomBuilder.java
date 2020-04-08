@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.geojson;
+package io.github.geom;
 
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
@@ -86,6 +86,11 @@ public class GeomBuilder {
    */
   public GeomBuilder point(double x, double y) {
     cstack.push(new Coordinate(x, y));
+    return this;
+  }
+
+  public GeomBuilder point(Coordinate coordinate) {
+    cstack.push(coordinate);
     return this;
   }
 

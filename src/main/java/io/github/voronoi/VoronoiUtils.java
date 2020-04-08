@@ -2,7 +2,7 @@ package io.github.voronoi;
 
 import io.github.geojson.Feature;
 import io.github.geojson.FeatureCollection;
-import io.github.geojson.Geom;
+import io.github.geom.Geom;
 import io.github.geojson.JtsUtils;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;

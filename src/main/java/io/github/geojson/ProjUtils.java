@@ -1,5 +1,6 @@
 package io.github.geojson;
 
+import io.github.geom.Geom;
 import org.locationtech.jts.geom.Point;
 
 /**

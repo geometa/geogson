@@ -1,7 +1,7 @@
 package io.github.turf;
 
 import io.github.geojson.Feature;
-import io.github.geojson.Geom;
+import io.github.geom.Geom;
 import io.github.geojson.JtsUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;

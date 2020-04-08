@@ -1,6 +1,6 @@
 package io.github.tiles;
 
-import io.github.geojson.Geom;
+import io.github.geom.Geom;
 import org.locationtech.jts.geom.Point;
 
 /**

@@ -1,23 +1,15 @@
 package io.github.geojson;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import io.github.geom.Geom;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.io.WKTWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JtsUtils {
     private static final Logger log = LoggerFactory.getLogger(JtsUtils.class);

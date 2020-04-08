@@ -12,18 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.geojson;
+package io.github.geom;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import io.github.geojson.GeoJSON;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.io.WKTReader;
@@ -193,6 +185,14 @@ public class Geom {
    */
   public static Point point(double x, double y) {
     return build().point(x, y).toPoint();
+  }
+
+  public static Point point(Coordinate coordinate) {
+    return build().point(coordinate).toPoint();
+  }
+
+  public static Envelope envelope(double x1, double y1, double x2, double y2) {
+    return new Envelope(x1,x2,y1,y2);
   }
 
   /**
