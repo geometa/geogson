@@ -51,6 +51,16 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 	 * value. The hash can only be 64bits long, thus a maximum precision of 12
 	 * characters can be achieved.
 	 */
+	public static String geoHash(double latitude, double longitude, int numberOfCharacters) {
+		GeoHash hash = withCharacterPrecision(latitude, longitude, numberOfCharacters);
+		return hash.toBase32();
+	}
+
+	/**
+	 * This method uses the given number of characters as the desired precision
+	 * value. The hash can only be 64bits long, thus a maximum precision of 12
+	 * characters can be achieved.
+	 */
 	public static GeoHash withCharacterPrecision(double latitude, double longitude, int numberOfCharacters) {
 		if (numberOfCharacters > MAX_CHARACTER_PRECISION) {
 			throw new IllegalArgumentException("A geohash can only be " + MAX_CHARACTER_PRECISION + " character long.");
@@ -151,16 +161,6 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 		setEnvelope(hash, latitudeRange, longitudeRange);
 		hash.bits <<= (MAX_BIT_PRECISION - hash.significantBits);
 		return hash;
-	}
-
-	/**
-	 * This method uses the given number of characters as the desired precision
-	 * value. The hash can only be 64bits long, thus a maximum precision of 12
-	 * characters can be achieved.
-	 */
-	public static String geoHashStringWithCharacterPrecision(double latitude, double longitude, int numberOfCharacters) {
-		GeoHash hash = withCharacterPrecision(latitude, longitude, numberOfCharacters);
-		return hash.toBase32();
 	}
 
 	private GeoHash(double latitude, double longitude, int desiredPrecision) {
