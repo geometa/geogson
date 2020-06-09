@@ -11,6 +11,11 @@ public class ProjUtils {
     private static double EE = 0.00669342162296594323;
     private static double X_PI = Math.PI * 3000.0 / 180.0;
 
+    public static void main(String[] args) {
+        Point pt = ProjUtils.wgs2gcj(113.72391,34.76892);
+        System.out.println(pt);
+    }
+
     /**
      * 计算wgs84到火星坐标系转换
      */
@@ -95,7 +100,9 @@ public class ProjUtils {
                 mlon = wgslon;
             }
 
-            if (++i > 10000) break;
+            if (++i > 10000) {
+                break;
+            }
         }
         return Geom.point(wgslon, wgsLat);
     }

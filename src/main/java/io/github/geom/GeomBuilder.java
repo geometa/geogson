@@ -201,7 +201,7 @@ public class GeomBuilder {
    */
   public GeomBuilder multiPoint() {
     if (!cstack.isEmpty()) {
-      gstack.push(factory.createMultiPoint(cpopAll()));
+      gstack.push(factory.createMultiPointFromCoords(cpopAll()));
     } else {
       gstack.push(factory.createMultiPoint(gpopAll(Point.class)));
     }
