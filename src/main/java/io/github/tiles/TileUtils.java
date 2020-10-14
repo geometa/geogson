@@ -9,10 +9,10 @@ import org.locationtech.jts.geom.Point;
 public class TileUtils {
     private static final double REM = 6378137;
     private static final int TILE_SIZE = 256;
+    /** 156543.03392804062 for tileSize 256 pixels **/
     private static final double INITIAL_RES = 2 * Math.PI * REM / TILE_SIZE;
-    //156543.03392804062 for tileSize 256 pixels
+    /** 20037508.342789244 **/
     private static final double ORIGIN_SHIFT = 2 * Math.PI * REM / 2.0;
-    //20037508.342789244
 
     /**
      * Resolution (meters/Pixel) for given zoom level (measured at Equator)
@@ -153,5 +153,10 @@ public class TileUtils {
      */
     public static Tile tmsTile(int tx, int ty, int zoom) {
         return new Tile(tx, (int) (Math.pow(2, zoom) - 1 - ty), zoom);
+    }
+
+    public static void main(String[] args) {
+        Tile tile = TileUtils.toTile(113.23344, 34.24234, 15);
+        System.out.println(tile);
     }
 }

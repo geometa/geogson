@@ -3,8 +3,9 @@ package io.github.geojson;
 import io.github.geom.Geom;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.io.WKTWriter;
+import org.locationtech.jts.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class JtsUtils {
     private static final Logger log = LoggerFactory.getLogger(JtsUtils.class);
     private static GeometryFactory geomFactory = Geom.factory;
     private static WKTReader reader = new WKTReader(geomFactory);
-    private static WKTWriter writer = new WKTWriter();
+    private static WKBWriter wkbWriter = new WKBWriter(2,true);;
     private static final double R = 6378137.0;
 
     /**
@@ -36,13 +37,75 @@ public class JtsUtils {
     }
 
     /**
+     * 把EWKT字符串转成对应的空间对象以便使用
+     * SRID=4326;
+     */
+    public static Geometry ewkt2Geometry(String str) {
+        try {
+            if(str.contains("SRID")){
+                String[] strs = StringUtil.split(str,";");
+                int srid = Integer.parseInt(StringUtil.split(strs[0],"=")[1]);
+                Geometry geometry = reader.read(strs[1]);
+                setSridRecurse(geometry, srid);
+                return geometry;
+            }else {
+                return reader.read(str);
+            }
+        } catch (ParseException e) {
+            log.error("EWKT格式空间对象转换时出现异常：" + e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 把WKT字符串转成对应的HexEwkb，能够直接入库Postgis
+     */
+    public static String wkt2HexEwkb(String str, int srid) {
+        Geometry geometry = wkt2Geometry(str);
+        setSridRecurse(geometry, srid);
+        String hexEwkb = WKBWriter.toHex(wkbWriter.write(geometry));
+        return hexEwkb;
+    }
+
+    /**
+     * 把EWKT字符串转成对应的HexEwkb，能够直接入库Postgis
+     */
+    public static String ewkt2HexEwkb(String str) {
+        Geometry geometry = ewkt2Geometry(str);
+        String hexEwkb = WKBWriter.toHex(wkbWriter.write(geometry));
+        return hexEwkb;
+    }
+
+    /**
      * 把JTS对象转换成WKT文本字符串
      *
      * @param geometry
      * @return
      */
     public static String geometry2Wkt(Geometry geometry) {
-        return writer.write(geometry);
+        return geometry.toText();
+    }
+
+    /**
+     * 把JTS对象转换成EWKT文本字符串
+     *
+     * @param geometry
+     * @return
+     */
+    public static String geometry2EWkt(Geometry geometry, int srid) {
+        return String.format("SRID=%d;%s", srid, geometry.toText());
+    }
+
+    /**
+     * 把JTS对象转换成EWKT文本字符串
+     *
+     * @param geometry
+     * @return
+     */
+    public static String geometry2HexEWkb(Geometry geometry, int srid) {
+        setSridRecurse(geometry, srid);
+        String hexEwkb = WKBWriter.toHex(wkbWriter.write(geometry));
+        return hexEwkb;
     }
 
     /**
@@ -96,7 +159,7 @@ public class JtsUtils {
     public static String bufferByWKT(String str, double distance) {
         Geometry geometry = wkt2Geometry(str);
         Geometry geo = buffer(geometry, distance);
-        return writer.write(geo);
+        return geo.toText();
     }
 
     /**
@@ -432,5 +495,28 @@ public class JtsUtils {
         }
         l2 = l1 * 180 / Math.PI + lamuda - theta * 180 / Math.PI;
         return Geom.point(l2, b2);
+    }
+
+    /**
+     * Recursively set a srid for the geometry and all subgeometries
+     *
+     * @param geom Geometry to work on
+     * @param srid SRID to be set to
+     */
+    public static void setSridRecurse(final Geometry geom, final int srid) {
+        geom.setSRID(srid);
+        if (geom instanceof GeometryCollection) {
+            final int subcnt = geom.getNumGeometries();
+            for (int i = 0; i < subcnt; i++) {
+                setSridRecurse(geom.getGeometryN(i), srid);
+            }
+        } else if (geom instanceof Polygon) {
+            Polygon poly = (Polygon) geom;
+            poly.getExteriorRing().setSRID(srid);
+            final int subcnt = poly.getNumInteriorRing();
+            for (int i = 0; i < subcnt; i++) {
+                poly.getInteriorRingN(i).setSRID(srid);
+            }
+        }
     }
 }
