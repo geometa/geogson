@@ -146,7 +146,7 @@ public class GeometryAdapter implements JsonSerializer<Geometry>, JsonDeserializ
     List<List<double[]>> list = new ArrayList<List<double[]>>(size);
     list.add(fromLineString(polygon.getExteriorRing()));
     for (int i = 0; i < size; i++) {
-      list.add(fromLineString(polygon.getExteriorRing()));
+      list.add(fromLineString(polygon.getInteriorRingN(i)));
     }
     return list;
   }
