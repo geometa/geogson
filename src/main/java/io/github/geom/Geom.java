@@ -242,6 +242,15 @@ public class Geom {
   }
 
   /**
+   * Convenience method to build a Polygon geometry.
+   *
+   * @param ord Even number of ordinates forming coordinates for the outer ring of the polygon.
+   */
+  public static Polygon polygon(Coordinate... ord) {
+    return factory.createPolygon(ord);
+  }
+
+  /**
    * Returns an iterable over the points of a multipoint.
    */
   public static Iterable<Point> iterate(MultiPoint mp) {

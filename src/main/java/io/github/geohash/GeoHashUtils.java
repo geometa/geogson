@@ -1,10 +1,7 @@
 package io.github.geohash;
 
 import io.github.geom.Geom;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.*;
 
 import java.util.*;
 
@@ -35,7 +32,7 @@ public class GeoHashUtils {
      * @param length length in characters (1 to 12)
      * @return geo hash of the specified length. The minimum length is 1 and the maximum length is 12.
      */
-    public String encode(double latitude, double longitude, int length){
+    public static String encode(double latitude, double longitude, int length){
         if(length <1 || length >12){
             throw new IllegalArgumentException("length must be between 1 and 12");
         }
@@ -80,7 +77,7 @@ public class GeoHashUtils {
      * @param pt point
      * @return geohash
      */
-    public String encode(Point pt){
+    public static String encode(Point pt){
         return encode(pt.getY(), pt.getX(), DEFAULT_GEO_HASH_LENGTH);
     }
 
@@ -90,7 +87,7 @@ public class GeoHashUtils {
      * @param length length in characters (1 to 12)
      * @return geohash
      */
-    public String encode(Point pt, int length){
+    public static String encode(Point pt, int length){
         return encode(pt.getY(), pt.getX(), length);
     }
 
@@ -99,7 +96,7 @@ public class GeoHashUtils {
      * @return double array representing the bounding box for the geoHash of [south latitude, north latitude, west
      * longitude, east longitude]
      */
-    public double[] decodeBbox(String geoHash){
+    public static double[] decodeBbox(String geoHash){
         double south = -90.0;
         double north = 90.0;
         double west = -180.0;
@@ -130,6 +127,12 @@ public class GeoHashUtils {
         return new double[]{west,south,east,north};
     }
 
+    public static Polygon decodePolygon(String geoHash){
+        double[] columnBox = decodeBbox(geoHash);
+        Polygon pg = Geom.polygon(columnBox[0],columnBox[1],columnBox[2],columnBox[1],columnBox[2],columnBox[3],columnBox[0],columnBox[3],columnBox[0],columnBox[1]);
+        return pg;
+    }
+
     /**
      * This decodes the geo hash into it's center. Note that the coordinate that you used to generate the geo hash may
      * be anywhere in the geo hash's bounding box and therefore you should not expect them to be identical.
@@ -142,7 +145,7 @@ public class GeoHashUtils {
      * @param geoHash valid geo hash
      * @return a Point representing the center of the geohash as a double array of [longitude,latitude]
      */
-    public Point decode(String geoHash){
+    public static Point decode(String geoHash){
         double[] bbox = decodeBbox(geoHash);
         double latitude = (bbox[1] + bbox[3]) / 2;
         double longitude = (bbox[0] + bbox[2]) / 2;
@@ -153,7 +156,7 @@ public class GeoHashUtils {
      * @param geoHash geohash
      * @return the geo hash of the same length directly south of the bounding box.
      */
-    public String south(String geoHash){
+    public static String south(String geoHash){
         double[] bbox = decodeBbox(geoHash);
         double latDiff = bbox[3] - bbox[1];
         double lat = bbox[1] - latDiff / 2;
@@ -165,7 +168,7 @@ public class GeoHashUtils {
      * @param geoHash geohash
      * @return the geo hash of the same length directly north of the bounding box.
      */
-    public String north(String geoHash){
+    public static String north(String geoHash){
         double[] bbox = decodeBbox(geoHash);
         double latDiff = bbox[3] - bbox[1];
         double lat = bbox[3] + latDiff / 2;
@@ -177,7 +180,7 @@ public class GeoHashUtils {
      * @param geoHash geohash
      * @return the geo hash of the same length directly west of the bounding box.
      */
-    public String west(String geoHash){
+    public static String west(String geoHash){
         double[] bbox = decodeBbox(geoHash);
         double lonDiff = bbox[2] - bbox[0];
         double lat = (bbox[1] + bbox[3]) / 2;
@@ -194,7 +197,7 @@ public class GeoHashUtils {
      * @param geoHash geohash
      * @return the geo hash of the same length directly east of the bounding box.
      */
-    public String east(String geoHash){
+    public static String east(String geoHash){
         double[] bbox = decodeBbox(geoHash);
         double lonDiff = bbox[2] - bbox[0];
         double lat = (bbox[1] + bbox[3]) / 2;
@@ -261,7 +264,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return String array with the geo hashes.
      */
-    public List<String> subHashes(String geoHash){
+    public static List<String> subHashes(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             list.add(geoHash + c);
@@ -273,7 +276,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 16 northern sub hashes of the geo hash
      */
-    public List<String> subHashesNorth(String geoHash){
+    public static List<String> subHashesNorth(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c <= 'g'){
@@ -287,7 +290,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 16 southern sub hashes of the geo hash
      */
-    public List<String> subHashesSouth(String geoHash){
+    public static List<String> subHashesSouth(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c >= 'h'){
@@ -301,7 +304,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 8 north-west sub hashes of the geo hash
      */
-    public List<String> subHashesNorthWest(String geoHash){
+    public static List<String> subHashesNorthWest(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c <= '7'){
@@ -315,7 +318,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 8 north-east sub hashes of the geo hash
      */
-    public List<String> subHashesNorthEast(String geoHash){
+    public static List<String> subHashesNorthEast(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c >= '8' && c<= 'g'){
@@ -329,7 +332,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 8 south-west sub hashes of the geo hash
      */
-    public List<String> subHashesSouthWest(String geoHash){
+    public static List<String> subHashesSouthWest(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c >= 'h' && c<= 'r'){
@@ -343,7 +346,7 @@ public class GeoHashUtils {
      * @param geoHash geo hash
      * @return the 8 south-east sub hashes of the geo hash
      */
-    public List<String> subHashesSouthEast(String geoHash){
+    public static List<String> subHashesSouthEast(String geoHash){
         List<String> list = new ArrayList<>();
         for (char c : BASE32_CHARS){
             if(c >= 's'){
@@ -353,52 +356,83 @@ public class GeoHashUtils {
         return list;
     }
 
-    public Set<String> geoHashesPolygon(Point... pts){
-        Geometry geom = Geom.polygon(pts);
-        Envelope envelope = geom.getEnvelopeInternal();
-        double diagonalDistance = distance(envelope.getMinY(),envelope.getMinX(),envelope.getMaxY(),envelope.getMaxX());
-        int hashLength = suitableHashLength(diagonalDistance, envelope.getMinY(),envelope.getMaxX());
-        return geoHashesPolygon();
+    /**
+     * @param lon1 longitude
+     * @param lon2 longitude
+     * @return true if l1 is west of l2
+     */
+    public static boolean isWest(double lon1, double lon2){
+        double ll1 = lon1 + 180;
+        double ll2 = lon2 + 180;
+        if(ll1 < ll2 && (ll2 - ll1)<180){
+            return true;
+        }else{
+            return (ll1>ll2 && (ll2 + 360 - ll1)<180);
+        }
     }
-
-
-
-    public int suitableHashLength(double granularityInMeters, double latitude, double longitude){
-        if(granularityInMeters < 5){
-            return 10;
+    /**
+     * @param lon1 longitude
+     * @param lon2 longitude
+     * @return true if l1 is east of l2
+     */
+    public static boolean isEast(double lon1, double lon2){
+        double ll1 = lon1 + 180;
+        double ll2 = lon2 + 180;
+        if(ll1 > ll2 && (ll1 - ll2)<180){
+            return true;
+        }else{
+            return (ll1 < ll2 && (ll1 + 360 -ll2)<180);
         }
-        String hash = encode(latitude, longitude, DEFAULT_GEO_HASH_LENGTH);
-        double width = 0.0;
-        int length = hash.length();
-        // the height is the same at for any latitude given a length, but the width converges towards the poles
-        while (width < granularityInMeters && hash.length() >= 2) {
-            length = hash.length();
-            double[] bbox = decodeBbox(hash);
-            width = distance(bbox[0], bbox[1], bbox[0], bbox[3]);
-            hash = hash.substring(0, hash.length() - 1);
-        }
-
-        return Math.min(length + 1, DEFAULT_GEO_HASH_LENGTH);
     }
 
     /**
-     * 计算两点之间的距离，参数均为WGS-84(EPSG:4326)
-     *
-     * @param lon1 起点经度
-     * @param lat1 起点维度
-     * @param lon2 终点经度
-     * @param lat2 终点维度
-     * @return 返回两点间距离，返回单位为米
+     * @param lat1 latitude
+     * @param lat2 latitude
+     * @return true if l1 is north of l2
      */
-    public static double distance(double lat1, double lon1, double lat2, double lon2) {
-        double radLat1 = Math.toRadians(lat1);
-        double radLat2 = Math.toRadians(lat2);
-        double a = radLat1 - radLat2;
-        double b = Math.toRadians(lon1) - Math.toRadians(lon2);
-        double s = 2 * Math.asin(
-                Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-        s = s * 6378137.0;
-        s = Math.round(s * 100000) / 100000;
-        return s;
+    public static boolean isNorth(double lat1, double lat2){
+        return lat1 > lat2;
+    }
+
+    /**
+     * @param lat1 latitude
+     * @param lat2 latitude
+     * @return true if l1 is south of l2
+     */
+    public static boolean isSouth(double lat1, double lat2){
+        return lat1 < lat2;
+    }
+
+    public static Set<String> geoHashesPolygon(int hashLength, Coordinate... pts){
+        Polygon geom = Geom.polygon(pts);
+        return geoHashesPolygon(geom, hashLength);
+    }
+
+    public static Set<String> geoHashesPolygon(Polygon polygon, int hashLength){
+        Envelope envelope = polygon.getEnvelopeInternal();
+        Set<String> set = new HashSet<>();
+        double southLat = envelope.getMinY();
+        double northLat = envelope.getMaxY();
+        double westLon = envelope.getMinX();
+        double eastLon = envelope.getMaxX();
+        String rowHash = encode(southLat,westLon, hashLength);
+        double[] rowBox = decodeBbox(rowHash);
+        while(rowBox[1] < northLat){
+            String columnHash = rowHash;
+            double[] columnBox = rowBox;
+            while (isWest(columnBox[0], eastLon)){
+                Geometry geoHashEvp = Geom.polygon(columnBox[0],columnBox[1],columnBox[2],columnBox[1],columnBox[2],columnBox[3],columnBox[0],columnBox[3],columnBox[0],columnBox[1]);
+                if(polygon.intersects(geoHashEvp)){
+                    set.add(columnHash);
+                }
+                // move column east
+                columnHash = east(columnHash);
+                columnBox = decodeBbox(columnHash);
+            }
+            // move row north
+            rowHash = north(rowHash);
+            rowBox = decodeBbox(rowHash);
+        }
+        return set;
     }
 }
