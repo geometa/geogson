@@ -29,7 +29,7 @@ public class Test {
         Geometry[] gms = new Geometry[hash.size()];
         int k=0;
         for(String st : hash){
-            Envelope columnBox = GeoHash.fromGeohashString(st).getEnvelope();
+            Envelope columnBox = GeoHash.decode(st).getEnvelope();
             Geometry geoHashEvp = Geom.polygon(columnBox.getMinX(),columnBox.getMinY(),columnBox.getMaxX(),columnBox.getMinY(),columnBox.getMaxX(),columnBox.getMaxY(),columnBox.getMinX(),columnBox.getMaxY(),columnBox.getMinX(),columnBox.getMinY());
             gms[k] = geoHashEvp;
             k++;

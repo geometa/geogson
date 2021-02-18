@@ -86,7 +86,7 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 		double westLon = envelope.getMinX();
 		double eastLon = envelope.getMaxX();
 		String rowHash = encode(southLat,westLon, hashLength);
-		Envelope rowBox = fromGeohashString(rowHash).envelope;
+		Envelope rowBox = decode(rowHash).envelope;
 		while(rowBox.getMinY() < northLat){
 			String columnHash = rowHash;
 			Envelope columnBox = rowBox;
@@ -96,19 +96,19 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 					set.add(columnHash);
 				}
 				// move column east
-				GeoHash column = fromGeohashString(columnHash).getEasternNeighbour();
+				GeoHash column = decode(columnHash).getEasternNeighbour();
 				columnHash = column.toBase32();
 				columnBox = column.envelope;
 			}
 			// move row north
-			GeoHash row = fromGeohashString(rowHash).getNorthernNeighbour();
+			GeoHash row = decode(rowHash).getNorthernNeighbour();
 			rowHash = row.toBase32();
 			rowBox = row.envelope;
 		}
 		return set;
 	}
 
-	public static GeoHash fromBinaryString(String binaryString) {
+	public static GeoHash decodeBinary(String binaryString) {
 		GeoHash geohash = new GeoHash();
 		for (int i = 0; i < binaryString.length(); i++) {
 			if (binaryString.charAt(i) == '1') {
@@ -130,7 +130,7 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 	 * This will also set up the hashes bounding box and other values, so it can
 	 * also be used with functions like within().
 	 */
-	public static GeoHash fromGeohashString(String geohash) {
+	public static GeoHash decode(String geohash) {
 		double[] latitudeRange = { -90.0, 90.0 };
 		double[] longitudeRange = { -180.0, 180.0 };
 
@@ -159,7 +159,7 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 		return hash;
 	}
 
-	public static GeoHash fromLongValue(long hashVal, int significantBits) {
+	public static GeoHash decodeLong(long hashVal, int significantBits) {
 		double[] latitudeRange = { -90.0, 90.0 };
 		double[] longitudeRange = { -180.0, 180.0 };
 
@@ -192,9 +192,9 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 		hash.envelope = Geom.envelope(longitudeRange[0], latitudeRange[0], longitudeRange[1], latitudeRange[1]);
 	}
 
-	public static GeoHash fromOrd(long ord, int significantBits) {
+	public static GeoHash decodeOrd(long ord, int significantBits) {
 		int insignificantBits = MAX_BIT_PRECISION - significantBits;
-		return fromLongValue(ord << insignificantBits, significantBits);
+		return decodeLong(ord << insignificantBits, significantBits);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 	}
 
 	public GeoHash next(int step) {
-		return fromOrd(ord() + step, significantBits);
+		return decodeOrd(ord() + step, significantBits);
 	}
 
 	public GeoHash next() {

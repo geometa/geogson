@@ -75,15 +75,6 @@ public class GeoHashUtils {
     /**
      * Encode a geojson style point of [longitude,latitude]
      * @param pt point
-     * @return geohash
-     */
-    public static String encode(Point pt){
-        return encode(pt.getY(), pt.getX(), DEFAULT_GEO_HASH_LENGTH);
-    }
-
-    /**
-     * Encode a geojson style point of [longitude,latitude]
-     * @param pt point
      * @param length length in characters (1 to 12)
      * @return geohash
      */
