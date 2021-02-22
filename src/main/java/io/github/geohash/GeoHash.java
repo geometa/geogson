@@ -159,6 +159,12 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 		return hash;
 	}
 
+	public static Polygon decodePolygon(String geoHash){
+		Envelope evp = decode(geoHash).envelope;
+		Polygon pg = Geom.polygon(evp.getMinX(),evp.getMinY(),evp.getMaxX(),evp.getMinY(),evp.getMaxX(),evp.getMaxX(),evp.getMinX(),evp.getMaxY(),evp.getMinX(),evp.getMinY());
+		return pg;
+	}
+
 	public static GeoHash decodeLong(long hashVal, int significantBits) {
 		double[] latitudeRange = { -90.0, 90.0 };
 		double[] longitudeRange = { -180.0, 180.0 };
