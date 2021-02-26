@@ -161,7 +161,7 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 
 	public static Polygon decodePolygon(String geoHash){
 		Envelope evp = decode(geoHash).envelope;
-		Polygon pg = Geom.polygon(evp.getMinX(),evp.getMinY(),evp.getMaxX(),evp.getMinY(),evp.getMaxX(),evp.getMaxX(),evp.getMinX(),evp.getMaxY(),evp.getMinX(),evp.getMinY());
+		Polygon pg = Geom.polygon(evp.getMinX(),evp.getMinY(),evp.getMaxX(),evp.getMinY(),evp.getMaxX(),evp.getMaxY(),evp.getMinX(),evp.getMaxY(),evp.getMinX(),evp.getMinY());
 		return pg;
 	}
 
